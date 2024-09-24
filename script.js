@@ -1,50 +1,88 @@
-// game.js
+let gameState = 'setup';
+let nickname = '';
+let startTime = null;
+let reactionTime = null;
+let worldRecords = [];
 
-let gameStartTime;
-let gameEndTime;
-let bestTime = Infinity;
+const gameArea = document.getElementById('game-area');
+const nicknameForm = document.getElementById('nickname-form');
+const nicknameInput = document.getElementById('nickname-input');
+const startButton = document.getElementById('start-button');
+const recordsList = document.getElementById('records-list');
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM content loaded');
-    
-    const startButton = document.getElementById('start-button');
-    const gameArea = document.getElementById('game-area');
-    const result = document.getElementById('result');
-    const bestTimeDisplay = document.getElementById('best-time');
+function startGame() {
+    gameState = 'ready';
+    gameArea.style.backgroundColor = 'blue';
+    gameArea.textContent = '초록색을 기다리세요...';
+    const changeTime = Math.floor(Math.random() * 4000) + 1000; // 1-5 seconds
+    setTimeout(() => {
+        gameState = 'go';
+        gameArea.style.backgroundColor = 'green';
+        gameArea.textContent = '클릭하세요!';
+        startTime = Date.now();
+    }, changeTime);
+}
 
-    startButton.addEventListener('click', startGame);
-    gameArea.addEventListener('click', endGame);
-
-    function startGame() {
-        console.log('Game started');
-        document.getElementById('nickname-form').style.display = 'none';
-        gameArea.style.display = 'block';
-        result.textContent = '';
-        gameStartTime = new Date().getTime();
+function handleClick() {
+    if (gameState === 'waiting') {
+        startGame();
+    } else if (gameState === 'ready') {
+        gameState = 'early';
+        gameArea.style.backgroundColor = 'red';
+        gameArea.textContent = '너무 빨랐어요! 다시 시도하세요.';
+        setTimeout(() => {
+            gameState = 'waiting';
+            gameArea.style.backgroundColor = 'blue';
+            gameArea.textContent = '클릭하여 시작';
+        }, 1000);
+    } else if (gameState === 'go') {
+        const endTime = Date.now();
+        reactionTime = endTime - startTime;
+        gameState = 'result';
+        gameArea.style.backgroundColor = 'yellow';
+        gameArea.textContent = `반응 시간: ${reactionTime}ms`;
+        updateWorldRecords(reactionTime);
+        setTimeout(() => {
+            gameState = 'waiting';
+            gameArea.style.backgroundColor = 'blue';
+            gameArea.textContent = '클릭하여 시작';
+        }, 1000);
     }
+}
 
-    function endGame() {
-        console.log('Game ended');
-        gameEndTime = new Date().getTime();
-        const reactionTime = (gameEndTime - gameStartTime) / 1000;
-        
-        result.textContent = `반응 시간: ${reactionTime.toFixed(3)}초`;
-        
-        if (reactionTime < bestTime) {
-            bestTime = reactionTime;
-            updateLeaderboard();
-        }
+function updateWorldRecords(newScore) {
+    worldRecords.push({ name: nickname, score: newScore });
+    worldRecords.sort((a, b) => a.score - b.score);
+    worldRecords = worldRecords.slice(0, 4);
+    updateRecordsList();
+}
 
-        gameArea.style.display = 'none';
-        document.getElementById('nickname-form').style.display = 'block';
+function updateRecordsList() {
+    recordsList.innerHTML = '';
+    worldRecords.forEach((record, index) => {
+        const li = document.createElement('li');
+        let medal = '';
+        if (index === 0) medal = '🥇';
+        else if (index === 1) medal = '🥈';
+        else if (index === 2) medal = '🥉';
+        li.textContent = `${medal} ${record.name}: ${record.score}ms`;
+        recordsList.appendChild(li);
+    });
+}
+
+startButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    nickname = nicknameInput.value.trim();
+    if (nickname) {
+        gameState = 'waiting';
+        nicknameForm.style.display = 'none';
+        gameArea.style.display = 'flex';
+        gameArea.style.backgroundColor = 'blue';
+        gameArea.textContent = '클릭하여 시작';
     }
-
-    function updateLeaderboard() {
-        console.log('Updating leaderboard');
-        bestTimeDisplay.textContent = `${bestTime.toFixed(3)}초`;
-    }
-
-    console.log('Event listeners set up');
 });
 
-console.log('game.js loaded');
+gameArea.addEventListener('click', handleClick);
+
+// 초기 상태 설정
+gameArea.style.display = 'none';
