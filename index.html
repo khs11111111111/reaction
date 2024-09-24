@@ -7,36 +7,57 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #game-container {
             text-align: center;
-            padding: 20px;
         }
         #game-area {
+            width: 300px;
+            height: 300px;
             margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
         }
-        #result, #leaderboard {
+        #nickname-form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+        #world-records {
             margin-top: 20px;
+        }
+        #world-records li {
+            text-align: left;
+            font-size: 18px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-    <div id="nickname-form">
-        <button id="start-button">게임 시작</button>
+    <div id="game-container">
+        <div id="nickname-form">
+            <input type="text" id="nickname-input" placeholder="닉네임을 입력하세요">
+            <button id="start-button">게임 시작</button>
+        </div>
+        <div id="game-area"></div>
+        <div id="world-records">
+            <h2>세계 기록</h2>
+            <ol id="records-list"></ol>
+        </div>
     </div>
-
-    <div id="game-area" style="display: none;">
-        클릭하여 종료
-    </div>
-
-    <div id="result"></div>
-
-    <div id="leaderboard">
-        <h2>최고 기록</h2>
-        <p id="best-time">아직 기록이 없습니다.</p>
-    </div>
-
     <script src="game.js"></script>
 </body>
 </html>
