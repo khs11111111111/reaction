@@ -5,23 +5,26 @@ let gameEndTime;
 let bestTime = Infinity;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const nicknameForm = document.getElementById('nickname-form');
+    console.log('DOM content loaded');
+    
+    const startButton = document.getElementById('start-button');
     const gameArea = document.getElementById('game-area');
     const result = document.getElementById('result');
-    const leaderboard = document.getElementById('leaderboard');
+    const bestTimeDisplay = document.getElementById('best-time');
 
-    nicknameForm.addEventListener('click', startGame);
+    startButton.addEventListener('click', startGame);
     gameArea.addEventListener('click', endGame);
 
     function startGame() {
-        nicknameForm.style.display = 'none';
+        console.log('Game started');
+        document.getElementById('nickname-form').style.display = 'none';
         gameArea.style.display = 'block';
-        gameArea.textContent = '클릭하여 게임 종료';
         result.textContent = '';
         gameStartTime = new Date().getTime();
     }
 
     function endGame() {
+        console.log('Game ended');
         gameEndTime = new Date().getTime();
         const reactionTime = (gameEndTime - gameStartTime) / 1000;
         
@@ -33,13 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         gameArea.style.display = 'none';
-        nicknameForm.style.display = 'block';
+        document.getElementById('nickname-form').style.display = 'block';
     }
 
     function updateLeaderboard() {
-        leaderboard.innerHTML = `
-            <h2>최고 기록</h2>
-            <p>${bestTime.toFixed(3)}초</p>
-        `;
+        console.log('Updating leaderboard');
+        bestTimeDisplay.textContent = `${bestTime.toFixed(3)}초`;
     }
+
+    console.log('Event listeners set up');
 });
+
+console.log('game.js loaded');
